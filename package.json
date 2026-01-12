@@ -1,0 +1,28 @@
+{
+  "name": "structocr",
+  "version": "1.0.0",
+  "description": "The official Node.js SDK for StructOCR API - Extract data from Passports, ID Cards, and Driver Licenses.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "ocr",
+    "passport-ocr",
+    "mrz-reader",
+    "kyc",
+    "id-card-scanner",
+    "driver-license-ocr",
+    "structocr",
+    "node-ocr"
+  ],
+  "author": "StructOCR Team",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/dracula911/structocr-node.git"
+  },
+  "dependencies": {
+    "axios": "^1.6.0"
+  }
+}
