@@ -24,7 +24,7 @@ class StructOCR {
             headers: {
                 'x-api-key': this.apiKey,
                 'Content-Type': 'application/json',
-                'User-Agent': 'StructOCR-Node/1.0.0'
+                'User-Agent': 'StructOCR-Node/1.1.0'
             },
             // 增加超时设置，OCR有时候需要几秒钟
             timeout: 30000
@@ -95,6 +95,16 @@ class StructOCR {
      */
     async scanDriverLicense(filePath) {
         return this._postImage('driver-license', filePath);
+    }
+
+    /**
+     * Scan an Invoice (新增的 API)
+     * @param {string} filePath - Path to the image file
+     * @returns {Promise<object>} Structured JSON data
+     */
+    async scanInvoice(filePath) {
+        // 'invoice' 是你后端 API 的具体路径，比如 https://api.structocr.com/v1/invoice
+        return this._postImage('invoice', filePath);
     }
 }
 
