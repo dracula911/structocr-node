@@ -65,6 +65,7 @@ const licenseData = await client.scanDriverLicense('./license.jpg');
 * **Passport Parsing**: Extract MRZ, Name, DOB, Expiry Date.
 * **ID Card OCR**: Automatic field mapping for National IDs.
 * **Driver License**: Extract vehicle class and license numbers.
+* **Invoice**: Extract invoice number, currency, merchant, customer.
 * **Base64 Handling**: Automatically handles image encoding.
 
 ## Documentation
