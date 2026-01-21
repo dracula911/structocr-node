@@ -5,7 +5,7 @@
 
 **The official Node.js client for [StructOCR](https://structocr.com).**
 
-StructOCR allows developers to extract structured data from identity documents with 99% accuracy. Integrate **Passport OCR**, **National ID OCR**, and **Driver License OCR** into your Node.js or Electron applications.
+StructOCR allows developers to extract structured data from identity documents with 99% accuracy. Integrate **Passport OCR**, **National ID OCR**, **Driver License OCR** and **Invoice OCR** into your Node.js or Electron applications.
 
 👉 **[Get your Free API Key here](https://structocr.com)**
 
@@ -49,7 +49,7 @@ Using `async/await`:
 
 ```
 
-### 3. Scan ID & Driver License
+### 3. Scan ID & Driver License & Invoice
 
 ```javascript
 // Scan National ID
@@ -57,6 +57,9 @@ const idData = await client.scanNationalId('./id_card.png');
 
 // Scan Driver License
 const licenseData = await client.scanDriverLicense('./license.jpg');
+
+// Scan Invoice
+const invoiceData = await client.scanInvoice('./invoice.jpg');
 
 ```
 
