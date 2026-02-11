@@ -106,6 +106,15 @@ class StructOCR {
         // 'invoice' 是你后端 API 的具体路径，比如 https://api.structocr.com/v1/invoice
         return this._postImage('invoice', filePath);
     }
+
+    /**
+     * Scan a VIN code (Vehicle Identification Number)
+     * @param {string} filePath - Path to the image file
+     * @returns {Promise<object>} Structured JSON data
+     */
+    async scanVin(filePath) {
+        return this._postImage('vin', filePath);
+    }
 }
 
 module.exports = StructOCR;

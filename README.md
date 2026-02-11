@@ -5,7 +5,7 @@
 
 **The official Node.js client for [StructOCR](https://structocr.com).**
 
-StructOCR allows developers to extract structured data from identity documents with 99% accuracy. Integrate **Passport OCR**, **National ID OCR**, **Driver License OCR** and **Invoice OCR** into your Node.js or Electron applications.
+StructOCR allows developers to extract structured data from identity documents with 99% accuracy. Integrate **Passport OCR**, **National ID OCR**, **Driver License OCR**, **Invoice OCR** and **VIN OCR** into your Node.js or Electron applications.
 
 👉 **[Get your Free API Key here](https://structocr.com)**
 
@@ -61,6 +61,8 @@ const licenseData = await client.scanDriverLicense('./license.jpg');
 // Scan Invoice
 const invoiceData = await client.scanInvoice('./invoice.jpg');
 
+// Scan VIN
+const vinData = await client.scanVin('./vin.jpg');
 ```
 
 ## Features
@@ -69,6 +71,7 @@ const invoiceData = await client.scanInvoice('./invoice.jpg');
 * **ID Card OCR**: Automatic field mapping for National IDs.
 * **Driver License**: Extract vehicle class and license numbers.
 * **Invoice**: Extract invoice number, currency, merchant, customer.
+* **VIN OCR**: Extract Vehicle Identification Number from car chassis or windshield.
 * **Base64 Handling**: Automatically handles image encoding.
 
 ## Documentation

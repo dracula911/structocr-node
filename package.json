@@ -1,7 +1,7 @@
 {
   "name": "structocr",
-  "version": "1.1.0",
-  "description": "The official Node.js SDK for StructOCR API - Extract data from Passports, ID Cards, and Driver Licenses.",
+  "version": "1.2.0",
+  "description": "The official Node.js SDK for StructOCR API - Extract data from Passports, ID Cards, Driver Licenses, and VINs.",
   "main": "index.js",
   "homepage": "https://structocr.com",
   "scripts": {
@@ -15,7 +15,8 @@
     "id-card-scanner",
     "driver-license-ocr",
     "structocr",
-    "node-ocr"
+    "node-ocr",
+    "vin-ocr"
   ],
   "author": "StructOCR Team",
   "license": "MIT",
