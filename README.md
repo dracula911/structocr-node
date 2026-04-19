@@ -1,6 +1,16 @@
 [![npm version](https://badge.fury.io/js/structocr.svg)](https://badge.fury.io/js/structocr)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
+---
+
+## 🚀 What's New in v1.3.2
+* **VIN OCR**: Extract Vehicle Identification Number from car chassis or windshield.
+* **Container OCR Support**: Extract shipping container numbers  accurately from images.
+* **Invoice OCR Support**: Extract invoice number, currency, merchant, and customer details.
+* Check out the [Quick Start](#3-scan-id-driver-license-invoice-vin--container) below to see how to use them!
+
+---
+
 **The official Node.js client for [StructOCR](https://structocr.com).**
 
 StructOCR allows developers to extract structured data from identity documents with 99% accuracy. Integrate **Passport OCR**, **National ID OCR**, **Driver License OCR**, **Invoice OCR**, **VIN OCR**, and **Container OCR** into your Node.js or Electron applications.

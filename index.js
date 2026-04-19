@@ -24,7 +24,7 @@ class StructOCR {
             headers: {
                 'x-api-key': this.apiKey,
                 'Content-Type': 'application/json',
-                'User-Agent': 'StructOCR-Node/1.3.1'
+                'User-Agent': 'StructOCR-Node/1.3.2'
             },
             // 增加超时设置，OCR有时候需要几秒钟
             timeout: 30000
