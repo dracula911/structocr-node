@@ -24,7 +24,7 @@ class StructOCR {
             headers: {
                 'x-api-key': this.apiKey,
                 'Content-Type': 'application/json',
-                'User-Agent': 'StructOCR-Node/1.3.2'
+                'User-Agent': 'StructOCR-Node/1.4.0'
             },
             // 增加超时设置，OCR有时候需要几秒钟
             timeout: 30000
@@ -123,6 +123,24 @@ class StructOCR {
      */
     async scanContainer(filePath) {
         return this._postImage('container', filePath);
+    }
+
+    /**
+     * Scan a HIN code (Hull Identification Number / 船体识别码)
+     * @param {string} filePath - Path to the image file
+     * @returns {Promise<object>} Structured JSON data
+     */
+    async scanHin(filePath) {
+        return this._postImage('hin', filePath);
+    }
+
+    /**
+     * Scan a Receipt (购物小票/收据识别)
+     * @param {string} filePath - Path to the image file
+     * @returns {Promise<object>} Structured JSON data
+     */
+    async scanReceipt(filePath) {
+        return this._postImage('receipt', filePath);
     }
 }
 
