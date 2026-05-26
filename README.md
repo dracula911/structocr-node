@@ -3,10 +3,11 @@
 
 ---
 
-## 🚀 What's New in v1.4.0
-* **Receipt OCR**: Extract merchant details, dates, total amounts, and tax information from shopping receipts.
-* **HIN OCR**: Extract Hull Identification Numbers (HIN) from boats and marine vessels.
-* **Previous updates (v1.3.x)**: Added support for VIN, Shipping Containers, and Invoice OCR.
+## 🚀 What's New in v1.5.0
+We've massively upgraded our Identity Verification engine! 
+* **Hybrid VIZ + MRZ AI for National IDs**: The SDK now automatically cross-validates unstructured Visual Zone (VIZ) data against cryptographic Machine Readable Zone (MRZ) checksums (TD1/TD2) for zero hallucination. Raw MRZ lines are now accessible via `additional_fields`.
+* **Previous updates**: Added support for Receipt OCR, HIN OCR, VIN, and Shipping Containers.
+
 * Check out the [Quick Start](#3-scan-other-document-types) below to see how to use them!
 
 ---
@@ -82,7 +83,7 @@ const containerData = await client.scanContainer('./container.jpg');
 ## Features
 
 * **Passport Parsing**: Extract MRZ, Name, DOB, Expiry Date.
-* **ID Card OCR**: Automatic field mapping for National IDs.
+* **National ID OCR**: Extract regional specific fields (CNP, CPF, NIN) and raw ICAO 9303 MRZ lines with Hybrid Validation.
 * **Driver License**: Extract vehicle class and license numbers.
 * **Invoice**: Extract invoice number, currency, merchant, customer.
 * **Receipt**: Extract merchant details, timestamps, and total amounts from thermal receipts.

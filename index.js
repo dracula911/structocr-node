@@ -24,7 +24,7 @@ class StructOCR {
             headers: {
                 'x-api-key': this.apiKey,
                 'Content-Type': 'application/json',
-                'User-Agent': 'StructOCR-Node/1.4.0'
+                'User-Agent': 'StructOCR-Node/1.5.0'
             },
             // 增加超时设置，OCR有时候需要几秒钟
             timeout: 30000
@@ -83,6 +83,7 @@ class StructOCR {
      * Scan a National ID Card
      * @param {string} filePath - Path to the image file
      * @returns {Promise<object>} Structured JSON data
+     * @note In v1.5.0+, raw MRZ lines (if present) are accessible via `data.additional_fields`.
      */
     async scanNationalId(filePath) {
         return this._postImage('national-id', filePath);
