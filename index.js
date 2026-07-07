@@ -15,18 +15,18 @@ class StructOCR {
             throw new Error('API Key is required. Get one at https://structocr.com');
         }
 
-        // 去除末尾的斜杠，防止拼接 URL 出错
+
         this.baseURL = baseURL.replace(/\/$/, '');
 
-        // 初始化 Axios 实例
+
         this.client = axios.create({
             baseURL: this.baseURL,
             headers: {
                 'x-api-key': this.apiKey,
                 'Content-Type': 'application/json',
-                'User-Agent': 'StructOCR-Node/1.5.0'
+                'User-Agent': 'StructOCR-Node/1.6.0'
             },
-            // 增加超时设置，OCR有时候需要几秒钟
+
             timeout: 30000
         });
     }
@@ -41,28 +41,23 @@ class StructOCR {
                 throw new Error(`File not found: ${filePath}`);
             }
 
-            // 1. 读取文件并转换为 Base64
             const imageBuffer = fs.readFileSync(filePath);
             const base64Image = imageBuffer.toString('base64');
 
-            // 2. 构造 JSON Payload
             const payload = {
                 img: base64Image
             };
 
-            // 3. 发送请求
+
             const response = await this.client.post(`/${endpoint}`, payload);
             return response.data;
 
         } catch (error) {
             if (error.response) {
-                // 服务器返回了错误状态码 (4xx, 5xx)
                 throw new Error(`API Error: ${error.response.status} - ${JSON.stringify(error.response.data)}`);
             } else if (error.request) {
-                // 请求发出去了，但没有收到响应
                 throw new Error('Network Error: No response received from StructOCR API');
             } else {
-                // 设置请求时发生错误
                 throw new Error(`Client Error: ${error.message}`);
             }
         }
@@ -99,12 +94,12 @@ class StructOCR {
     }
 
     /**
-     * Scan an Invoice (新增的 API)
+     * Scan an Invoice 
      * @param {string} filePath - Path to the image file
      * @returns {Promise<object>} Structured JSON data
      */
     async scanInvoice(filePath) {
-        // 'invoice' 是你后端 API 的具体路径，比如 https://api.structocr.com/v1/invoice
+        // 'invoice'  https://api.structocr.com/v1/invoice
         return this._postImage('invoice', filePath);
     }
 
@@ -118,7 +113,7 @@ class StructOCR {
     }
 
     /**
-     * Scan a Container code (集装箱号识别)
+     * Scan a Container code 
      * @param {string} filePath - Path to the image file
      * @returns {Promise<object>} Structured JSON data
      */
@@ -127,7 +122,7 @@ class StructOCR {
     }
 
     /**
-     * Scan a HIN code (Hull Identification Number / 船体识别码)
+     * Scan a HIN code (Hull Identification Number)
      * @param {string} filePath - Path to the image file
      * @returns {Promise<object>} Structured JSON data
      */
@@ -136,12 +131,21 @@ class StructOCR {
     }
 
     /**
-     * Scan a Receipt (购物小票/收据识别)
+     * Scan a Receipt 
      * @param {string} filePath - Path to the image file
      * @returns {Promise<object>} Structured JSON data
      */
     async scanReceipt(filePath) {
         return this._postImage('receipt', filePath);
+    }
+
+    /**
+     * Scan a Vehicle License Plate (Optimized for Southeast Asia).
+     * @param {string} filePath - Path to the local license plate image file.
+     * @returns {Promise<Object>} - Structured JSON data including plate_number, region_text, etc.
+     */
+    async scanLicensePlate(filePath) {
+        return this._postImage('license-plate', filePath);
     }
 }
 

@@ -1,7 +1,7 @@
 {
   "name": "structocr",
-  "version": "1.5.0",
-  "description": "The official Node.js SDK for StructOCR API - Extract data from Passports, ID Cards, Driver Licenses, Invoices, Receipts, VINs, HINs, and Shipping Containers.",
+  "version": "1.6.0",
+  "description": "The official Node.js SDK for StructOCR API - Extract data from Passports, ID Cards, Driver Licenses, Invoices, Receipts, VINs, HINs, License plates, and Shipping Containers.",
   "main": "index.js",
   "homepage": "https://structocr.com",
   "scripts": {
@@ -20,6 +20,7 @@
     "invoice-ocr",
     "receipt-ocr",
     "hin-ocr",
+    "license-plate-ocr",
     "container-ocr"
   ],
   "author": "StructOCR Team",
