@@ -1,108 +1,80 @@
-[![npm version](https://badge.fury.io/js/structocr.svg)](https://badge.fury.io/js/structocr)
-[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+# StructOCR Node.js SDK
 
----
+Official Node.js client for the [StructOCR API](https://structocr.com/developers).
 
-## 🚀 What's New in v1.6.0
-* **License Plate OCR**: We've launched a specialized ALPR engine optimized for SEA plates. Accurately extract native scripts (Thai, Khmer, etc.), plate numbers, colors, and vehicle types without forcing foreign formatting rules.
-* **Hybrid VIZ + MRZ AI for National IDs**: Automatically cross-validate unstructured Visual Zone (VIZ) data against cryptographic Machine Readable Zone (MRZ) checksums (TD1/TD2) for zero hallucination. 
-* Check out the [Quick Start](#3-scan-other-document-types) below to see how to use them!
+The SDK accepts a local JPG, PNG, WebP, or PDF path, plus an in-memory `Buffer` or `Uint8Array`. It validates the decoded file locally, converts it to Base64, and sends the API's required JSON payload: `{"img":"..."}`. The REST API itself does not accept file paths, buffers, URLs, or multipart uploads.
 
----
-
-**The official Node.js client for [StructOCR](https://structocr.com).**
-
-StructOCR allows developers to extract structured data from identity documents and industry codes with 99% accuracy. Integrate **Passport OCR**, **National ID OCR**, **Driver License OCR**, **Invoice OCR**, **Receipt OCR**, **VIN OCR**, **HIN OCR**, **Container OCR**, and **License Plate OCR** into your Node.js or Electron applications.
-
-👉 **[Get your Free API Key here](https://structocr.com)**
-
-## Installation
-
-Install via npm:
+## Install
 
 ```bash
 npm install structocr
-
 ```
 
-## Quick Start
+Node.js 18+ is required.
 
-### 1. Initialize the Client
+## Quick start
 
-```javascript
+```bash
+export STRUCTOCR_API_KEY="YOUR_API_KEY"
+```
+
+```js
 const StructOCR = require('structocr');
 
-// Initialize with your API Key
-const client = new StructOCR('sk_live_xxxxxxxx');
+const client = new StructOCR();
+const result = await client.scanPassport('./passport.jpg');
 
+if (result.success) {
+  console.log(result.data.passport_number);
+  console.log(result.data.given_names, result.data.surname);
+}
 ```
 
-### 2. Scan a Passport (Passport OCR)
+PDF paths work the same way:
 
-Using `async/await`:
-
-```javascript
-(async () => {
-  try {
-    // The SDK supports local file paths, Base64 strings, or image URLs
-    const result = await client.scanPassport('./passport_sample.jpg');
-    
-    console.log('Document Number:', result.data.document_number);
-    console.log('Full Name:', result.data.name);
-    
-  } catch (error) {
-    console.error('OCR Failed:', error.message);
-  }
-})();
-
+```js
+const result = await client.scanInvoice('./invoice.pdf');
 ```
 
-### 3. Scan Other Document Types
+Express and other server frameworks can pass an uploaded Buffer without writing a temporary file:
 
-```javascript
-// Scan License Plate (New in v1.6.0)
-const plateData = await client.scanLicensePlate('./license_plate.jpg');
-
-// Scan National ID
-const idData = await client.scanNationalId('./id_card.png');
-
-// Scan Driver License
-const licenseData = await client.scanDriverLicense('./license.jpg');
-
-// Scan Invoice
-const invoiceData = await client.scanInvoice('./invoice.jpg');
-
-// Scan Receipt
-const receiptData = await client.scanReceipt('./receipt.jpg');
-
-// Scan VIN
-const vinData = await client.scanVin('./vin.jpg');
-
-// Scan HIN 
-const hinData = await client.scanHin('./hin.jpg');
-
-// Scan Container
-const containerData = await client.scanContainer('./container.jpg');
-
+```js
+const result = await client.scanPassport(req.file.buffer);
 ```
 
-## Features
+The SDK converts the Buffer to Base64 locally. StructOCR's REST API still receives `application/json` with an `img` string.
 
-* **Flexible Inputs**: Seamlessly pass local file uploads, Base64-encoded strings, or image URLs.
-* **License Plate OCR**: Extract SEA-optimized plate numbers, regional texts, plate colors, and vehicle types.
-* **Passport Parsing**: Extract MRZ, Name, DOB, Expiry Date.
-* **National ID OCR**: Extract regional specific fields (CNP, CPF, NIN) and raw ICAO 9303 MRZ lines with Hybrid Validation.
-* **Driver License**: Extract vehicle class and license numbers.
-* **Invoice**: Extract invoice number, currency, merchant, customer.
-* **Receipt**: Extract merchant details, timestamps, and total amounts from thermal receipts.
-* **VIN OCR**: Extract Vehicle Identification Number from car chassis or windshield.
-* **HIN OCR**: Extract Hull Identification Numbers accurately from marine vessels.
-* **Container OCR**: Extract shipping container numbers accurately from images.
+## Methods
 
-## Documentation
+```text
+scanPassport(file)
+scanNationalId(file)
+scanDriverLicense(file)
+scanInvoice(file)
+scanReceipt(file)
+scanVin(file)
+scanHin(file)
+scanContainer(file)
+scanLicensePlate(file)
+scanVehicleRegistration(file)
+scanAtmCassette(file)
+getAccountBalance()
+```
 
-For full API documentation, please visit [StructOCR Docs](https://www.structocr.com/developers).
+All document methods accept a local path, Buffer, or Uint8Array. Supported decoded formats are JPG, PNG, WebP, and PDF, up to 4.5MB.
+
+## Configuration
+
+```js
+const client = new StructOCR(
+  'YOUR_API_KEY',
+  'https://api.structocr.com/v1',
+  60000,
+);
+```
+
+TypeScript declarations are included. See the [API documentation](https://structocr.com/developers) for endpoint-specific response schemas and error codes.
 
 ## License
 
-MIT License.
+MIT

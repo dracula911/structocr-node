@@ -1,11 +1,19 @@
 {
   "name": "structocr",
-  "version": "1.6.0",
-  "description": "The official Node.js SDK for StructOCR API - Extract data from Passports, ID Cards, Driver Licenses, Invoices, Receipts, VINs, HINs, License plates, and Shipping Containers.",
+  "version": "1.7.0",
+  "description": "Official Node.js SDK for StructOCR Base64 document APIs, including images, PDFs, and account balance.",
   "main": "index.js",
+  "types": "index.d.ts",
+  "files": [
+    "index.js",
+    "index.d.ts",
+    "README.md",
+    "LICENSE"
+  ],
   "homepage": "https://structocr.com",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "node --test",
+    "prepublishOnly": "npm test"
   },
   "keywords": [
     "ocr",
@@ -21,15 +29,27 @@
     "receipt-ocr",
     "hin-ocr",
     "license-plate-ocr",
-    "container-ocr"
+    "container-ocr",
+    "vehicle-registration-ocr",
+    "atm-cassette-ocr"
   ],
   "author": "StructOCR Team",
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "https://github.com/dracula911/structocr-node.git"
+    "url": "git+https://github.com/dracula911/structocr-node.git"
+  },
+  "bugs": {
+    "url": "https://github.com/dracula911/structocr-node/issues"
+  },
+  "publishConfig": {
+    "access": "public",
+    "registry": "https://registry.npmjs.org"
   },
   "dependencies": {
     "axios": "^1.6.0"
+  },
+  "engines": {
+    "node": ">=18"
   }
 }
