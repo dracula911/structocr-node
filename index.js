@@ -3,6 +3,19 @@ const fs = require('fs');
 
 const MAX_FILE_SIZE = Math.floor(4.5 * 1024 * 1024);
 const SUPPORTED_FORMATS = 'JPG, PNG, WebP, and PDF';
+const { version: SDK_VERSION } = require('./package.json');
+const RETRYABLE_STATUS_CODES = new Set([429, 502, 503, 504]);
+
+class StructOCRError extends Error {
+    constructor(message, options = {}) {
+        super(message, options.cause ? { cause: options.cause } : undefined);
+        this.name = 'StructOCRError';
+        this.status = options.status ?? null;
+        this.code = options.code ?? null;
+        this.details = options.details ?? null;
+        this.retryable = options.retryable ?? false;
+    }
+}
 
 class StructOCR {
     /**
@@ -22,7 +35,7 @@ class StructOCR {
             headers: {
                 'x-api-key': this.apiKey,
                 'Content-Type': 'application/json',
-                'User-Agent': 'StructOCR-Node/1.7.0'
+                'User-Agent': `StructOCR-Node/${SDK_VERSION}`
             },
             timeout
         });
@@ -78,22 +91,51 @@ class StructOCR {
     }
 
     /** @private */
-    async _postImage(endpoint, input) {
+    async _postImage(endpoint, input, params) {
         try {
             const content = StructOCR._readFile(input);
-            const response = await this.client.post(`/${endpoint}`, {
-                img: content.toString('base64')
-            });
+            const body = { img: content.toString('base64') };
+            const response = params
+                ? await this.client.post(`/${endpoint}`, body, { params })
+                : await this.client.post(`/${endpoint}`, body);
             return response.data;
         } catch (error) {
-            if (error.response) {
-                throw new Error(`API Error: ${error.response.status} - ${JSON.stringify(error.response.data)}`);
-            }
-            if (error.request) {
-                throw new Error('Network Error: No response received from StructOCR API');
-            }
-            throw new Error(`Client Error: ${error.message}`);
+            throw StructOCR._normalizeError(error);
         }
+    }
+
+    /** @private */
+    static _normalizeError(error) {
+        if (error instanceof StructOCRError) return error;
+        if (error.response) {
+            const status = Number(error.response.status) || null;
+            const details = error.response.data ?? null;
+            const code = details && typeof details === 'object'
+                ? (details.code || details.error || null)
+                : null;
+            const apiMessage = details && typeof details === 'object' ? details.message : null;
+            return new StructOCRError(
+                apiMessage || `API Error: ${status} - ${JSON.stringify(details)}`,
+                {
+                    status,
+                    code,
+                    details,
+                    retryable: status !== null && RETRYABLE_STATUS_CODES.has(status),
+                    cause: error
+                }
+            );
+        }
+        if (error.request) {
+            return new StructOCRError('Network Error: No response received from StructOCR API', {
+                code: 'NETWORK_ERROR',
+                retryable: true,
+                cause: error
+            });
+        }
+        return new StructOCRError(`Client Error: ${error.message}`, {
+            code: 'CLIENT_ERROR',
+            cause: error
+        });
     }
 
     async getAccountBalance() {
@@ -101,13 +143,7 @@ class StructOCR {
             const response = await this.client.get('/account/balance');
             return response.data;
         } catch (error) {
-            if (error.response) {
-                throw new Error(`API Error: ${error.response.status} - ${JSON.stringify(error.response.data)}`);
-            }
-            if (error.request) {
-                throw new Error('Network Error: No response received from StructOCR API');
-            }
-            throw new Error(`Client Error: ${error.message}`);
+            throw StructOCR._normalizeError(error);
         }
     }
 
@@ -118,10 +154,32 @@ class StructOCR {
     async scanVin(input) { return this._postImage('vin', input); }
     async scanContainer(input) { return this._postImage('container', input); }
     async scanHin(input) { return this._postImage('hin', input); }
-    async scanReceipt(input) { return this._postImage('receipt', input); }
+    async scanReceipt(input, options = {}) {
+        const responseVersion = options.responseVersion ?? 1;
+        const accuracy = options.accuracy ?? 'standard';
+        if (![1, 2].includes(responseVersion)) {
+            throw new StructOCRError('responseVersion must be 1 or 2', { code: 'INVALID_OPTIONS' });
+        }
+        if (!['standard', 'enhanced'].includes(accuracy)) {
+            throw new StructOCRError('accuracy must be "standard" or "enhanced"', { code: 'INVALID_OPTIONS' });
+        }
+        if (accuracy === 'enhanced' && responseVersion !== 2) {
+            throw new StructOCRError('Enhanced accuracy requires responseVersion=2', { code: 'INVALID_OPTIONS' });
+        }
+        if (responseVersion === 1 && accuracy === 'standard') {
+            return this._postImage('receipt', input);
+        }
+        return this._postImage('receipt', input, {
+            response_version: responseVersion,
+            accuracy
+        });
+    }
     async scanLicensePlate(input) { return this._postImage('license-plate', input); }
     async scanVehicleRegistration(input) { return this._postImage('vehicle-registration', input); }
     async scanAtmCassette(input) { return this._postImage('atm-cassette', input); }
+    async scanWeighbridgeTicket(input) { return this._postImage('weighbridge-ticket', input); }
 }
 
+StructOCR.StructOCRError = StructOCRError;
 module.exports = StructOCR;
+module.exports.StructOCRError = StructOCRError;

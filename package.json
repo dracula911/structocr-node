@@ -1,6 +1,6 @@
 {
   "name": "structocr",
-  "version": "1.7.0",
+  "version": "1.8.0",
   "description": "Official Node.js SDK for StructOCR Base64 document APIs, including images, PDFs, and account balance.",
   "main": "index.js",
   "types": "index.d.ts",
@@ -31,7 +31,8 @@
     "license-plate-ocr",
     "container-ocr",
     "vehicle-registration-ocr",
-    "atm-cassette-ocr"
+    "atm-cassette-ocr",
+    "weighbridge-ticket-ocr"
   ],
   "author": "StructOCR Team",
   "license": "MIT",

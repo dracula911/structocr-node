@@ -2,7 +2,7 @@
 
 Official Node.js client for the [StructOCR API](https://structocr.com/developers).
 
-The SDK accepts a local JPG, PNG, WebP, or PDF path, plus an in-memory `Buffer` or `Uint8Array`. It validates the decoded file locally, converts it to Base64, and sends the API's required JSON payload: `{"img":"..."}`. The REST API itself does not accept file paths, buffers, URLs, or multipart uploads.
+The SDK accepts a local JPG, PNG, WebP, or PDF path, plus an in-memory `Buffer` or `Uint8Array`. It validates the decoded file locally, converts it to Base64, and sends JSON as `{"img":"..."}`. The REST API also supports multipart uploads; this SDK release keeps Base64 JSON as its default transport for backward compatibility.
 
 ## Install
 
@@ -58,10 +58,30 @@ scanContainer(file)
 scanLicensePlate(file)
 scanVehicleRegistration(file)
 scanAtmCassette(file)
+scanWeighbridgeTicket(file)
 getAccountBalance()
 ```
 
 All document methods accept a local path, Buffer, or Uint8Array. Supported decoded formats are JPG, PNG, WebP, and PDF, up to 4.5MB.
+
+Receipt v2 provides a richer response. Enhanced accuracy requires v2 and costs 2 credits instead of the standard 1 credit:
+
+```js
+const receipt = await client.scanReceipt('./receipt.jpg', {
+  responseVersion: 2,
+  accuracy: 'enhanced'
+});
+```
+
+Weighbridge ticket example:
+
+```js
+const result = await client.scanWeighbridgeTicket('./weighbridge-ticket.jpg');
+if (result.success) {
+  console.log(result.data.weights);
+  console.log(result.data.validation);
+}
+```
 
 ## Configuration
 
@@ -74,6 +94,22 @@ const client = new StructOCR(
 ```
 
 TypeScript declarations are included. See the [API documentation](https://structocr.com/developers) for endpoint-specific response schemas and error codes.
+
+## Errors
+
+API, network, and client failures are exposed as `StructOCR.StructOCRError`. Existing `catch (error)` code continues to work because it extends the standard `Error` class.
+
+```js
+try {
+  await client.scanPassport('./passport.jpg');
+} catch (error) {
+  if (error instanceof StructOCR.StructOCRError) {
+    console.error(error.status, error.code, error.retryable);
+  }
+}
+```
+
+`retryable` is advisory only. The SDK does not automatically retry OCR requests because doing so without an idempotency key could charge a request twice.
 
 ## License
 
