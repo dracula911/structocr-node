@@ -1,6 +1,6 @@
 {
   "name": "structocr",
-  "version": "1.8.0",
+  "version": "1.9.0",
   "description": "Official Node.js SDK for StructOCR Base64 document APIs, including images, PDFs, and account balance.",
   "main": "index.js",
   "types": "index.d.ts",
@@ -22,6 +22,8 @@
     "kyc",
     "id-card-scanner",
     "driver-license-ocr",
+    "pdf417",
+    "aamva",
     "structocr",
     "node-ocr",
     "vin-ocr",

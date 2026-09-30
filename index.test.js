@@ -74,11 +74,12 @@ test('maps the new OCR methods to their API routes', async () => {
     await client.scanVehicleRegistration(JPEG);
     await client.scanAtmCassette(JPEG);
     await client.scanWeighbridgeTicket(JPEG);
+    await client.scanDriverLicensePdf417(JPEG);
 
-    assert.deepEqual(endpoints, ['vehicle-registration', 'atm-cassette', 'weighbridge-ticket']);
+    assert.deepEqual(endpoints, ['vehicle-registration', 'atm-cassette', 'weighbridge-ticket', 'driver-license-pdf417']);
 });
 
-test('keeps legacy receipt requests unchanged and maps v2 enhanced options', async () => {
+test('uses the Receipt v2 default and only sends enhanced accuracy', async () => {
     const client = makeClient();
     const requests = [];
     client.client.post = async (url, body, config) => {
@@ -87,11 +88,13 @@ test('keeps legacy receipt requests unchanged and maps v2 enhanced options', asy
     };
 
     await client.scanReceipt(JPEG);
-    await client.scanReceipt(JPEG, { responseVersion: 2, accuracy: 'enhanced' });
+    await client.scanReceipt(JPEG, { accuracy: 'enhanced' });
+    await client.scanReceipt(JPEG, { responseVersion: 2 });
 
     assert.equal(requests[0].url, '/receipt');
     assert.equal(requests[0].config, undefined);
-    assert.deepEqual(requests[1].config.params, { response_version: 2, accuracy: 'enhanced' });
+    assert.deepEqual(requests[1].config.params, { accuracy: 'enhanced' });
+    assert.deepEqual(requests[2].config.params, { response_version: 2 });
 });
 
 test('rejects invalid receipt options before making a request', async () => {
@@ -99,9 +102,15 @@ test('rejects invalid receipt options before making a request', async () => {
     client.client.post = async () => assert.fail('request should not be sent');
 
     await assert.rejects(
-        client.scanReceipt(JPEG, { responseVersion: 1, accuracy: 'enhanced' }),
+        client.scanReceipt(JPEG, { responseVersion: 1 }),
         error => error instanceof StructOCR.StructOCRError && error.code === 'INVALID_OPTIONS'
     );
+});
+
+test('rejects PDF input for the image-only PDF417 endpoint', async () => {
+    const client = makeClient();
+    client.client.post = async () => assert.fail('request should not be sent');
+    await assert.rejects(client.scanDriverLicensePdf417(PDF), /JPG, PNG, and WebP/);
 });
 
 test('exposes structured API errors without enabling automatic retries', async () => {

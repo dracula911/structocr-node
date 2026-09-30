@@ -5,10 +5,10 @@ declare namespace StructOCR {
     type StructOCRResponse = Response;
 
     interface ReceiptOptions {
-        /** Defaults to 1 for backward compatibility. */
-        responseVersion?: 1 | 2;
-        /** Enhanced accuracy requires responseVersion 2 and costs 2 credits. */
+        /** The endpoint returns Receipt v2 by default. Enhanced accuracy costs 2 credits. */
         accuracy?: "standard" | "enhanced";
+        /** Accepted for compatibility. Receipt v1 is retired. */
+        responseVersion?: 2;
     }
 
     interface ErrorOptions {
@@ -33,6 +33,7 @@ declare class StructOCR {
     scanPassport(file: StructOCR.File): Promise<StructOCR.Response>;
     scanNationalId(file: StructOCR.File): Promise<StructOCR.Response>;
     scanDriverLicense(file: StructOCR.File): Promise<StructOCR.Response>;
+    scanDriverLicensePdf417(file: StructOCR.File): Promise<StructOCR.Response>;
     scanInvoice(file: StructOCR.File): Promise<StructOCR.Response>;
     scanVin(file: StructOCR.File): Promise<StructOCR.Response>;
     scanContainer(file: StructOCR.File): Promise<StructOCR.Response>;

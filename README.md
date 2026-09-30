@@ -50,6 +50,7 @@ The SDK converts the Buffer to Base64 locally. StructOCR's REST API still receiv
 scanPassport(file)
 scanNationalId(file)
 scanDriverLicense(file)
+scanDriverLicensePdf417(file)
 scanInvoice(file)
 scanReceipt(file)
 scanVin(file)
@@ -62,15 +63,25 @@ scanWeighbridgeTicket(file)
 getAccountBalance()
 ```
 
-All document methods accept a local path, Buffer, or Uint8Array. Supported decoded formats are JPG, PNG, WebP, and PDF, up to 4.5MB.
+All document methods accept a local path, Buffer, or Uint8Array, up to 4.5MB. Most methods support JPG, PNG, WebP, and PDF. `scanDriverLicensePdf417` accepts JPG, PNG, and WebP only.
 
-Receipt v2 provides a richer response. Enhanced accuracy requires v2 and costs 2 credits instead of the standard 1 credit:
+The Receipt endpoint returns v2 by default. Enhanced accuracy costs 2 credits instead of the standard 1 credit and is enabled with the `accuracy` option:
 
 ```js
 const receipt = await client.scanReceipt('./receipt.jpg', {
-  responseVersion: 2,
   accuracy: 'enhanced'
 });
+```
+
+`responseVersion: 2` remains accepted for compatibility but is not required. Receipt v1 is retired.
+
+US driver license PDF417 example:
+
+```js
+const result = await client.scanDriverLicensePdf417('./license-back.jpg');
+if (result.success) {
+  console.log(result.data.document_number);
+}
 ```
 
 Weighbridge ticket example:

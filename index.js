@@ -3,6 +3,7 @@ const fs = require('fs');
 
 const MAX_FILE_SIZE = Math.floor(4.5 * 1024 * 1024);
 const SUPPORTED_FORMATS = 'JPG, PNG, WebP, and PDF';
+const IMAGE_ONLY_FORMATS = 'JPG, PNG, and WebP';
 const { version: SDK_VERSION } = require('./package.json');
 const RETRYABLE_STATUS_CODES = new Set([429, 502, 503, 504]);
 
@@ -63,7 +64,7 @@ class StructOCR {
     }
 
     /** @private */
-    static _readFile(input) {
+    static _readFile(input, options = {}) {
         let content;
         if (Buffer.isBuffer(input)) {
             content = input;
@@ -84,16 +85,20 @@ class StructOCR {
         if (content.length > MAX_FILE_SIZE) {
             throw new Error('File exceeds the maximum allowed size of 4.5MB');
         }
-        if (!StructOCR._detectMime(content)) {
+        const mimeType = StructOCR._detectMime(content);
+        if (!mimeType) {
             throw new Error(`Unsupported file format. Supported formats: ${SUPPORTED_FORMATS}`);
+        }
+        if (options.allowPdf === false && mimeType === 'application/pdf') {
+            throw new Error(`Unsupported file format. Supported formats: ${IMAGE_ONLY_FORMATS}`);
         }
         return content;
     }
 
     /** @private */
-    async _postImage(endpoint, input, params) {
+    async _postImage(endpoint, input, params, options = {}) {
         try {
-            const content = StructOCR._readFile(input);
+            const content = StructOCR._readFile(input, options);
             const body = { img: content.toString('base64') };
             const response = params
                 ? await this.client.post(`/${endpoint}`, body, { params })
@@ -150,29 +155,29 @@ class StructOCR {
     async scanPassport(input) { return this._postImage('passport', input); }
     async scanNationalId(input) { return this._postImage('national-id', input); }
     async scanDriverLicense(input) { return this._postImage('driver-license', input); }
+    async scanDriverLicensePdf417(input) {
+        return this._postImage('driver-license-pdf417', input, undefined, { allowPdf: false });
+    }
     async scanInvoice(input) { return this._postImage('invoice', input); }
     async scanVin(input) { return this._postImage('vin', input); }
     async scanContainer(input) { return this._postImage('container', input); }
     async scanHin(input) { return this._postImage('hin', input); }
     async scanReceipt(input, options = {}) {
-        const responseVersion = options.responseVersion ?? 1;
+        const responseVersion = options.responseVersion;
         const accuracy = options.accuracy ?? 'standard';
-        if (![1, 2].includes(responseVersion)) {
-            throw new StructOCRError('responseVersion must be 1 or 2', { code: 'INVALID_OPTIONS' });
+        if (responseVersion !== undefined && responseVersion !== 2) {
+            throw new StructOCRError('responseVersion must be 2 when provided; Receipt v1 is retired', { code: 'INVALID_OPTIONS' });
         }
         if (!['standard', 'enhanced'].includes(accuracy)) {
             throw new StructOCRError('accuracy must be "standard" or "enhanced"', { code: 'INVALID_OPTIONS' });
         }
-        if (accuracy === 'enhanced' && responseVersion !== 2) {
-            throw new StructOCRError('Enhanced accuracy requires responseVersion=2', { code: 'INVALID_OPTIONS' });
-        }
-        if (responseVersion === 1 && accuracy === 'standard') {
+        if (accuracy === 'standard' && responseVersion === undefined) {
             return this._postImage('receipt', input);
         }
-        return this._postImage('receipt', input, {
-            response_version: responseVersion,
-            accuracy
-        });
+        const params = {};
+        if (responseVersion === 2) params.response_version = 2;
+        if (accuracy === 'enhanced') params.accuracy = 'enhanced';
+        return this._postImage('receipt', input, params);
     }
     async scanLicensePlate(input) { return this._postImage('license-plate', input); }
     async scanVehicleRegistration(input) { return this._postImage('vehicle-registration', input); }
