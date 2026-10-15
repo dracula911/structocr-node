@@ -1,7 +1,7 @@
 {
   "name": "structocr",
-  "version": "1.9.0",
-  "description": "Official Node.js SDK for StructOCR Base64 document APIs, including images, PDFs, and account balance.",
+  "version": "1.9.1",
+  "description": "Passport, ID card, driver license, VIN, invoice and receipt OCR: turn images and PDFs into structured JSON. Official StructOCR SDK for Node.js.",
   "main": "index.js",
   "types": "index.d.ts",
   "files": [
