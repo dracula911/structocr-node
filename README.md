@@ -1,8 +1,40 @@
 # StructOCR Node.js SDK
 
-Official Node.js client for the [StructOCR API](https://structocr.com/developers).
+Official Node.js client for the [StructOCR API](https://structocr.com/developers?utm_source=npm&utm_medium=readme&utm_campaign=sdk).
+
+Send a photo or PDF of a passport, ID card, driver license, VIN, invoice, receipt or shipping container and get structured JSON back: one method call per document, no templates to train.
 
 The SDK accepts a local JPG, PNG, WebP, or PDF path, plus an in-memory `Buffer` or `Uint8Array`. It validates the decoded file locally, converts it to Base64, and sends JSON as `{"img":"..."}`. The REST API also supports multipart uploads; this SDK release keeps Base64 JSON as its default transport for backward compatibility.
+
+## Get a free API key
+
+1. [Create an account](https://structocr.com/register?utm_source=npm&utm_medium=readme&utm_campaign=sdk). New accounts get **200 free credits**, enough for 100 passport or driver license scans, and no credit card is needed.
+2. Copy your key from **API Keys** in the dashboard.
+3. Optionally try any document type on a sample image in the [Playground](https://structocr.com/dashboard/playground?utm_source=npm&utm_medium=readme&utm_campaign=sdk) before you write code.
+
+Not ready to sign up? Try any document in your browser on a sample image or your own file, no account needed: use the **Try it** links in the table below.
+
+After the free credits, packs start at $5 for 500 credits. There is no subscription and credits do not expire. See [pricing](https://structocr.com/pricing?utm_source=npm&utm_medium=readme&utm_campaign=sdk).
+
+## Supported documents
+
+| Document | Method | Credits per scan | Try it |
+| --- | --- | --- | --- |
+| Passport | `scanPassport` | 2 | [Try it](https://structocr.com/products/passport-ocr?utm_source=npm&utm_medium=readme&utm_campaign=sdk_try#live-demo) |
+| National ID card | `scanNationalId` | 2 | [Try it](https://structocr.com/products/national-id-ocr?utm_source=npm&utm_medium=readme&utm_campaign=sdk_try#live-demo) |
+| Driver license (front) | `scanDriverLicense` | 2 | [Try it](https://structocr.com/products/driver-license-ocr?utm_source=npm&utm_medium=readme&utm_campaign=sdk_try#live-demo) |
+| US/Canada driver license PDF417 barcode | `scanDriverLicensePdf417` | 2 | [Try it](https://structocr.com/tools/driver-license-pdf417-scanner?utm_source=npm&utm_medium=readme&utm_campaign=sdk_try) |
+| Vehicle registration | `scanVehicleRegistration` | 2 | [Try it](https://structocr.com/products/vehicle-registration-ocr?utm_source=npm&utm_medium=readme&utm_campaign=sdk_try#live-demo) |
+| VIN | `scanVin` | 1 | [Try it](https://structocr.com/products/vin-ocr?utm_source=npm&utm_medium=readme&utm_campaign=sdk_try#live-demo) |
+| License plate | `scanLicensePlate` | 1 | [Try it](https://structocr.com/products/license-plate-ocr?utm_source=npm&utm_medium=readme&utm_campaign=sdk_try#live-demo) |
+| Invoice | `scanInvoice` | 3 | [Try it](https://structocr.com/products/invoice-ocr?utm_source=npm&utm_medium=readme&utm_campaign=sdk_try#live-demo) |
+| Receipt | `scanReceipt` | 1 | [Try it](https://structocr.com/products/receipt-ocr?utm_source=npm&utm_medium=readme&utm_campaign=sdk_try#live-demo) |
+| Shipping container (ISO 6346) | `scanContainer` | 1 | [Try it](https://structocr.com/products/container-ocr?utm_source=npm&utm_medium=readme&utm_campaign=sdk_try#live-demo) |
+| Weighbridge ticket | `scanWeighbridgeTicket` | 2 | [Try it](https://structocr.com/products/weighbridge-ticket-ocr?utm_source=npm&utm_medium=readme&utm_campaign=sdk_try#live-demo) |
+| ATM cassette | `scanAtmCassette` | 1 | |
+| HIN (boat hull number) | `scanHin` | 1 | [Try it](https://structocr.com/products/hin-ocr?utm_source=npm&utm_medium=readme&utm_campaign=sdk_try#live-demo) |
+
+The receipt endpoint's optional enhanced mode costs 2 credits. Only successful requests are charged.
 
 ## Install
 
@@ -27,6 +59,28 @@ const result = await client.scanPassport('./passport.jpg');
 if (result.success) {
   console.log(result.data.passport_number);
   console.log(result.data.given_names, result.data.surname);
+}
+```
+
+A passport scan returns JSON like this (fictional sample document):
+
+```json
+{
+  "success": true,
+  "data": {
+    "type": "passport",
+    "country_code": "UTO",
+    "nationality": "UTOPIAN",
+    "passport_number": "X4R7T2K9P",
+    "surname": "MORGAN",
+    "given_names": "OLIVIA ROSE",
+    "sex": "F",
+    "date_of_birth": "1990-03-14",
+    "place_of_birth": "ZENITH CITY",
+    "date_of_issue": "2024-07-16",
+    "date_of_expiry": "2034-07-15",
+    "place_of_issue": null
+  }
 }
 ```
 
@@ -104,7 +158,7 @@ const client = new StructOCR(
 );
 ```
 
-TypeScript declarations are included. See the [API documentation](https://structocr.com/developers) for endpoint-specific response schemas and error codes.
+TypeScript declarations are included. See the [API documentation](https://structocr.com/developers?utm_source=npm&utm_medium=readme&utm_campaign=sdk) for endpoint-specific response schemas and error codes.
 
 ## Errors
 
