@@ -1,7 +1,7 @@
 {
   "name": "structocr",
-  "version": "1.9.1",
-  "description": "Passport, ID card, driver license, VIN, invoice and receipt OCR: turn images and PDFs into structured JSON. Official StructOCR SDK for Node.js.",
+  "version": "1.10.0",
+  "description": "Structured OCR API SDK for Node.js: passports, visas, proof of address, health cards, IDs, driver licenses, auto insurance, VIN Pro, invoices, receipts, and bills of lading.",
   "main": "index.js",
   "types": "index.d.ts",
   "files": [
@@ -34,7 +34,13 @@
     "container-ocr",
     "vehicle-registration-ocr",
     "atm-cassette-ocr",
-    "weighbridge-ticket-ocr"
+    "weighbridge-ticket-ocr",
+    "vin-pro-ocr",
+    "auto-insurance-ocr",
+    "health-card-ocr",
+    "proof-of-address-ocr",
+    "visa-ocr",
+    "bill-of-lading-ocr"
   ],
   "author": "StructOCR Team",
   "license": "MIT",

@@ -75,8 +75,48 @@ test('maps the new OCR methods to their API routes', async () => {
     await client.scanAtmCassette(JPEG);
     await client.scanWeighbridgeTicket(JPEG);
     await client.scanDriverLicensePdf417(JPEG);
+    await client.scanHealthCard(PDF);
+    await client.scanProofOfAddress(PDF);
+    await client.scanVisa(PDF);
+    await client.scanVinPro(JPEG);
+    await client.scanAutoInsurance(PDF);
+    await client.scanBillOfLading(PDF);
 
-    assert.deepEqual(endpoints, ['vehicle-registration', 'atm-cassette', 'weighbridge-ticket', 'driver-license-pdf417']);
+    assert.deepEqual(endpoints, [
+        'vehicle-registration',
+        'atm-cassette',
+        'weighbridge-ticket',
+        'driver-license-pdf417',
+        'health-card',
+        'proof-of-address',
+        'visa',
+        'vin-pro',
+        'auto-insurance',
+        'bill-of-lading'
+    ]);
+});
+
+test('accepts PDF input for newly added document endpoints', async () => {
+    const client = makeClient();
+    const calls = [];
+    client.client.post = async (url, body) => {
+        calls.push({ url, decoded: Buffer.from(body.img, 'base64') });
+        return { data: { success: true } };
+    };
+
+    await client.scanProofOfAddress(PDF);
+    await client.scanVisa(PDF);
+    await client.scanBillOfLading(PDF);
+    await client.scanHealthCard(PDF);
+    await client.scanAutoInsurance(PDF);
+
+    assert.deepEqual(
+        calls.map(c => c.url),
+        ['/proof-of-address', '/visa', '/bill-of-lading', '/health-card', '/auto-insurance']
+    );
+    for (const call of calls) {
+        assert.deepEqual(call.decoded, PDF);
+    }
 });
 
 test('uses the Receipt v2 default and only sends enhanced accuracy', async () => {

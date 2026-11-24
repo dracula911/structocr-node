@@ -158,9 +158,14 @@ class StructOCR {
     async scanDriverLicensePdf417(input) {
         return this._postImage('driver-license-pdf417', input, undefined, { allowPdf: false });
     }
+    async scanHealthCard(input) { return this._postImage('health-card', input); }
+    async scanProofOfAddress(input) { return this._postImage('proof-of-address', input); }
+    async scanVisa(input) { return this._postImage('visa', input); }
     async scanInvoice(input) { return this._postImage('invoice', input); }
     async scanVin(input) { return this._postImage('vin', input); }
+    async scanVinPro(input) { return this._postImage('vin-pro', input); }
     async scanContainer(input) { return this._postImage('container', input); }
+    async scanBillOfLading(input) { return this._postImage('bill-of-lading', input); }
     async scanHin(input) { return this._postImage('hin', input); }
     async scanReceipt(input, options = {}) {
         const responseVersion = options.responseVersion;
@@ -181,6 +186,7 @@ class StructOCR {
     }
     async scanLicensePlate(input) { return this._postImage('license-plate', input); }
     async scanVehicleRegistration(input) { return this._postImage('vehicle-registration', input); }
+    async scanAutoInsurance(input) { return this._postImage('auto-insurance', input); }
     async scanAtmCassette(input) { return this._postImage('atm-cassette', input); }
     async scanWeighbridgeTicket(input) { return this._postImage('weighbridge-ticket', input); }
 }
